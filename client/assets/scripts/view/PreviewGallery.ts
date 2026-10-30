@@ -7,8 +7,8 @@ import type { ArtFrame, HeroArt } from './HeroArt';
 
 const FIRST_BATCH: ReadonlyArray<readonly [string, string]> = [
     ['idle', '待机'],
-    ['attack', '念珠普攻'],
-    ['cast', '诵经施法'],
+    ['attack', '普攻'],
+    ['cast', '技能'],
 ];
 const RATES = [0.25, 0.5, 1];
 const GAP = 0.6;
