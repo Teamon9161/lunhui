@@ -185,7 +185,8 @@ export class GameBoot extends Component {
         }
         const t1 = now();
         this.view.sync(w.over ? 1 : Math.min(1, this.acc / TICK), simDt);
-        if (this.gallery && this.mode === 'preview') this.gallery.update(simDt);
+        // 动作预览自带独立倍率，不能再乘战斗的全局倍速。
+        if (this.gallery && this.mode === 'preview') this.gallery.update(this.paused ? 0 : dt);
         const t2 = now();
         this.perf.frame(t1 - t0, t2 - t1);
 
