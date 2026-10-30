@@ -1,0 +1,161 @@
+{
+  "pixelsPerUnit": 1.5,
+  "targetHeight": 200,
+  "face": {
+    "source": "idle-v1.png",
+    "cell": 0
+  },
+  "actions": {
+    "idle": {
+      "rgbaFrames": "rig/idle-rig",
+      "ref": 0,
+      "loop": true,
+      "durations": [
+        0.15,
+        0.15,
+        0.15,
+        0.15,
+        0.15,
+        0.15,
+        0.15,
+        0.15,
+        0.15,
+        0.15,
+        0.15,
+        0.15,
+        0.15,
+        0.15,
+        0.15,
+        0.15
+      ],
+      "_note": "由 idle-rig.json 从待机第 1 帧变形生成（rig_frames.py），所有帧同源，比例一致；旧的 4 帧重绘版见 raw/idle-v1.png"
+    },
+    "move": {
+      "source": "move-v1.png",
+      "cells": 6,
+      "refHeight": 480,
+      "anchor": "head",
+      "loop": true,
+      "durations": [
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09
+      ]
+    },
+    "attack": {
+      "source": "attack-v2.png",
+      "dropSpill": true,
+      "cells": 6,
+      "ref": 0,
+      "release": 3,
+      "pre": [
+        0.2,
+        0.35,
+        0.45
+      ],
+      "post": [
+        0.3,
+        0.35,
+        0.35
+      ],
+      "durations": [
+        0.06,
+        0.105,
+        0.135,
+        0.075,
+        0.0875,
+        0.0875
+      ],
+      "muzzle": [
+        72,
+        118
+      ]
+    },
+    "cast": {
+      "source": "cast-v1.png",
+      "cells": 6,
+      "ref": 0,
+      "release": 3,
+      "pre": [
+        0.15,
+        0.4,
+        0.45
+      ],
+      "post": [
+        0.25,
+        0.35,
+        0.4
+      ],
+      "durations": [
+        0.075,
+        0.2,
+        0.225,
+        0.0875,
+        0.1225,
+        0.14
+      ],
+      "muzzle": [
+        56,
+        126
+      ]
+    },
+    "hit": {
+      "source": "hit-v1.png",
+      "cells": 3,
+      "ref": 2,
+      "durations": [
+        0.08,
+        0.12,
+        0.14
+      ]
+    },
+    "die": {
+      "source": "die-v1.png",
+      "cells": 5,
+      "use": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "ref": 0,
+      "hold": true,
+      "durations": [
+        0.14,
+        0.18,
+        0.2,
+        0.6
+      ],
+      "scaleBy": "height"
+    },
+    "fx_stone": {
+      "source": "fx_stone-v1.png",
+      "cells": 5,
+      "use": [
+        0,
+        1
+      ],
+      "anchor": "center",
+      "scale": 0.27
+    },
+    "fx_impact": {
+      "source": "fx_stone-v1.png",
+      "cells": 5,
+      "use": [
+        2,
+        3,
+        4
+      ],
+      "anchor": "center",
+      "scale": 0.34,
+      "durations": [
+        0.07,
+        0.1,
+        0.16
+      ]
+    }
+  }
+}

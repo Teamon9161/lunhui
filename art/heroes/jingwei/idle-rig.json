@@ -1,0 +1,22 @@
+{
+  "_note": "精卫待机：只用 idle-v1 第 1 格这一张图，通过变形做呼吸、点头、翅膀/羽冠/尾羽摆动。坐标为 512 格内像素，y 向下。rotate 为一个周期内的总摆角（度），move 为呼吸最高点的位移，lag 为相位滞后（周期比例）。",
+  "source": "idle-v1.png",
+  "cell": 0,
+  "frames": 16,
+  "parts": [
+    { "name": "上身起伏", "include": [{ "rect": [-100, 612, -100, 230], "feather": 110 }], "move": [0, -2.4] },
+    { "name": "头部跟随", "include": [{ "circle": [275, 100, 95], "feather": 40 }], "move": [0, 1.0], "rotate": 1.6, "pivot": [272, 172], "lag": 0.12 },
+    { "name": "羽冠", "include": [{ "circle": [195, 50, 55], "feather": 25 }], "rotate": 7, "pivot": [248, 62], "lag": 0.2 },
+    {
+      "name": "后翅", "include": [{ "rect": [335, 520, 160, 500], "feather": 30 }],
+      "exclude": [{ "rect": [280, 350, 255, 340], "feather": 12 }, { "rect": [250, 330, 330, 500], "feather": 12 }],
+      "rotate": -3.5, "pivot": [322, 188], "lag": 0.06
+    },
+    {
+      "name": "前翅", "include": [{ "rect": [90, 235, 235, 480], "feather": 25 }],
+      "exclude": [{ "rect": [175, 330, 400, 500], "feather": 15 }],
+      "rotate": 3, "pivot": [222, 232], "lag": 0.06
+    },
+    { "name": "尾羽", "include": [{ "rect": [345, 430, 375, 490], "feather": 15 }], "rotate": 4, "pivot": [345, 372], "lag": 0.25 }
+  ]
+}

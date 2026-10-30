@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "cocos-web",
+      "runtimeExecutable": "bun",
+      "runtimeArgs": ["client/tools/serve-build.ts"],
+      "port": 5180
+    }
+  ]
+}

@@ -1,0 +1,189 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>六道道相演示</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Sans+SC:wght@400;500;700&display=swap">
+<style>
+/* 布局：一条说明 + 控制条，下面是六格「同一本体、六种道相」的对照，单一夜色战场观感 */
+:root{
+  --ink:#ece4d4; --dim:#a39a8b; --ground:#17141c; --card:#211c27; --line:#3a3245; --gold:#e8b44a;
+  --display:"Ma Shan Zheng","STKaiti","KaiTi",serif;
+  --body:"Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  color-scheme:dark;
+}
+body{background:var(--ground);color:var(--ink);font-family:var(--body);line-height:1.6;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 40px}
+.wrap{max-width:980px;margin:0 auto;display:flex;flex-direction:column;gap:22px}
+h1{font-family:var(--display);font-weight:400;font-size:44px;line-height:1.1;margin:0;color:var(--gold);text-wrap:balance}
+.lead{margin:6px 0 0;color:var(--dim);max-width:62ch;font-size:15px}
+.bar{display:flex;flex-wrap:wrap;gap:14px 26px;align-items:center}
+.seg{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.seg span{font-size:12px;color:var(--dim);letter-spacing:.08em;margin-right:4px}
+.seg button{font:inherit;font-size:14px;color:var(--ink);background:transparent;border:1px solid var(--line);border-radius:999px;padding:4px 14px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--gold);border-color:var(--gold);color:#1d150a;font-weight:700}
+.seg button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+@media (max-width:720px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}h1{font-size:36px}}
+.cell{background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden;display:flex;flex-direction:column}
+.cell canvas{display:block;width:100%;aspect-ratio:1/0.92;background:radial-gradient(120% 90% at 50% 85%,#2a2533 0%,#1a1720 70%)}
+.meta{padding:10px 14px 14px;display:flex;flex-direction:column;gap:4px;min-width:0}
+.name{display:flex;align-items:baseline;gap:8px}
+.name b{font-family:var(--display);font-weight:400;font-size:24px;line-height:1}
+.name small{font-size:12px;color:var(--dim)}
+.meta p{margin:0;font-size:13px;color:var(--dim)}
+.note{border-top:1px solid var(--line);padding-top:16px;color:var(--dim);font-size:14px;max-width:70ch}
+.note b{color:var(--ink);font-weight:500}
+@media (prefers-reduced-motion:reduce){.seg button{transition:none}}
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>六道道相</h1>
+    <p class="lead">下面六格是同一套孙悟空动画帧，没有为任何一道额外画图。换色、描边、光环、鬼火、业火、兽伴全部由代码叠加，正式版里每个英雄都这样复用。先看「战斗大小」，那才是手机上实际看到的尺寸。</p>
+  </header>
+
+  <div class="bar">
+    <div class="seg" role="group" aria-label="动作">
+      <span>动作</span>
+      <button id="a-idle" data-anim="idle" aria-pressed="true">待机</button>
+      <button id="a-walk" data-anim="walk" aria-pressed="false">移动</button>
+      <button id="a-attack" data-anim="attack" aria-pressed="false">攻击</button>
+    </div>
+    <div class="seg" role="group" aria-label="大小">
+      <span>大小</span>
+      <button id="s-battle" data-size="battle" aria-pressed="true">战斗大小</button>
+      <button id="s-zoom" data-size="zoom" aria-pressed="false">放大</button>
+    </div>
+  </div>
+
+  <div class="grid" id="grid"></div>
+
+  <p class="note"><b>这页只能回答「道相层够不够区分」</b>，回答不了「Q 版和皮影哪个好」：这里没有出图工具，没法生成新画风的样图。设计文档「画风与美术管线」一节里有两种画风各自的出图提示词，同一个角色、同一个动作，生成后放在一起就能直接比。</p>
+</div>
+
+<script>
+const FRAMES = /*FRAMES*/;
+const PATHS = [
+  {k:'ren',  n:'人道', t:'本职', d:'原样，不加任何东西。', col:'#d6cdbd'},
+  {k:'tian', n:'天道', t:'神通', d:'金色轮廓光、头顶光环、脚下祥云，整体漂浮。', col:'#e8b44a'},
+  {k:'asura',n:'修罗', t:'冲锋', d:'红黑换色、火焰描边；攻击时拖出残影。', col:'#e0573f'},
+  {k:'beast',n:'畜生', t:'兽伴', d:'偏暖换色，带一只兽伴（这里用缩小的分身占位）。', col:'#c08a4a'},
+  {k:'ghost',n:'饿鬼', t:'追猎', d:'去色偏绿、半透明、离地漂浮，绕着鬼火。', col:'#6fc082'},
+  {k:'hell', n:'地狱', t:'业火', d:'暗紫换色、紫色描边，脚下一圈业火。', col:'#9b6bd6'},
+];
+// 帧时长（毫秒），攻击沿用 pack.json 的 interval + delays
+const TIMING = {idle:[420,420], walk:[140,140,140,140], attack:[90,90,150,70,50,400]};
+const ANCHOR = {idle:{cx:100,feet:165}, walk:{cx:100,feet:165}, attack:{cx:140,feet:165}};
+const FIG_H = 115; // 原图里人物高度
+let anim='idle', size='battle';
+
+function load(src){return new Promise(r=>{const i=new Image();i.onload=()=>r(i);i.src=src})}
+function canvasOf(w,h){const c=document.createElement('canvas');c.width=w;c.height=h;return c}
+// 按亮度映射到两端颜色，再与原色混合
+function recolor(img, lo, hi, mix, sat, alpha){
+  const c=canvasOf(img.width,img.height),x=c.getContext('2d');x.drawImage(img,0,0);
+  const d=x.getImageData(0,0,c.width,c.height),p=d.data;
+  for(let i=0;i<p.length;i+=4){
+    if(!p[i+3])continue;
+    let r=p[i],g=p[i+1],b=p[i+2];const L=(0.3*r+0.59*g+0.11*b)/255;
+    if(sat!==1){const m=L*255;r=m+(r-m)*sat;g=m+(g-m)*sat;b=m+(b-m)*sat}
+    if(lo){const tr=lo[0]+(hi[0]-lo[0])*L,tg=lo[1]+(hi[1]-lo[1])*L,tb=lo[2]+(hi[2]-lo[2])*L;r+=(tr-r)*mix;g+=(tg-g)*mix;b+=(tb-b)*mix}
+    p[i]=r;p[i+1]=g;p[i+2]=b;if(alpha!==1)p[i+3]*=alpha;
+  }
+  x.putImageData(d,0,0);return c;
+}
+function silhouette(img,color){
+  const c=canvasOf(img.width,img.height),x=c.getContext('2d');x.drawImage(img,0,0);
+  x.globalCompositeOperation='source-in';x.fillStyle=color;x.fillRect(0,0,c.width,c.height);return c;
+}
+function topOf(img){
+  const c=canvasOf(img.width,img.height),x=c.getContext('2d');x.drawImage(img,0,0);
+  const p=x.getImageData(0,0,c.width,c.height).data;
+  for(let y=0;y<c.height;y++)for(let xx=0;xx<c.width;xx++)if(p[(y*c.width+xx)*4+3]>40)return y;
+  return 0;
+}
+
+const SETS={};
+async function prepare(){
+  for(const a of Object.keys(FRAMES)){
+    const imgs=await Promise.all(FRAMES[a].map(load));
+    SETS[a]=imgs.map(img=>({
+      img, top:topOf(img),
+      tian:recolor(img,[120,80,20],[255,236,170],0.22,1.05,1),
+      asura:recolor(img,[40,0,6],[255,120,70],0.62,1,1),
+      beast:recolor(img,[70,40,15],[245,200,140],0.28,0.95,1),
+      ghost:recolor(img,[20,60,40],[200,255,215],0.55,0.25,0.72),
+      hell:recolor(img,[22,6,40],[210,150,255],0.62,0.9,1),
+      petTint:recolor(img,[70,40,15],[230,180,120],0.45,0.9,1),
+      gold:silhouette(img,'#ffd56a'),fire:silhouette(img,'#ff7a3a'),violet:silhouette(img,'#b46bff'),
+    }));
+  }
+}
+
+const grid=document.getElementById('grid'),cells=[];
+for(const P of PATHS){
+  const el=document.createElement('div');el.className='cell';
+  el.innerHTML=`<canvas aria-label="${P.n}道相"></canvas><div class="meta"><div class="name"><b style="color:${P.col}">${P.n}</b><small>${P.t}</small></div><p>${P.d}</p></div>`;
+  grid.appendChild(el);cells.push({P,cv:el.querySelector('canvas'),trail:[]});
+}
+
+function frameAt(t){
+  const seq=TIMING[anim],total=seq.reduce((a,b)=>a+b,0);let m=t%total,i=0;
+  while(m>=seq[i]){m-=seq[i];i++}
+  return Math.min(i,SETS[anim].length-1);
+}
+
+function draw(t){
+  const fi=frameAt(t),F=SETS[anim][fi],A=ANCHOR[anim];
+  for(const c of cells){
+    const cv=c.cv,dpr=Math.min(2,window.devicePixelRatio||1),W=cv.clientWidth,H=cv.clientHeight;
+    if(cv.width!==Math.round(W*dpr)){cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr)}
+    const x=cv.getContext('2d');x.setTransform(dpr,0,0,dpr,0,0);x.clearRect(0,0,W,H);
+    const figPx=size==='battle'?Math.min(64,H*0.36):H*0.5,s=figPx/FIG_H;
+    const k=c.P.k,fx=W/2,fy=H*0.80,sec=t/1000;
+    const lift=k==='tian'?10+Math.sin(sec*2)*2.5:k==='ghost'?14+Math.sin(sec*2.6)*4:0;
+    const put=(img,dx=0,dy=0,sc=s)=>x.drawImage(img,fx-A.cx*sc+dx,fy-A.feet*sc-lift+dy,img.width*sc,img.height*sc);
+    // 地面影子
+    if(k!=='ghost'){x.fillStyle='rgba(0,0,0,.35)';x.beginPath();x.ellipse(fx,fy+1,30*s*2,7*s*2,0,0,7);x.fill()}
+    // 地狱：脚下业火圈
+    if(k==='hell'){
+      const R=figPx*0.72;x.save();x.globalCompositeOperation='lighter';
+      x.strokeStyle='rgba(160,90,255,.45)';x.lineWidth=2;x.setLineDash([6,5]);x.lineDashOffset=-sec*24;
+      x.beginPath();x.ellipse(fx,fy,R,R*0.32,0,0,7);x.stroke();x.setLineDash([]);
+      for(let i=0;i<14;i++){const a=i/14*Math.PI*2+sec*0.6,ph=(sec*1.4+i*0.37)%1,px=fx+Math.cos(a)*R,py=fy+Math.sin(a)*R*0.32-ph*22*s*2;
+        x.fillStyle=`rgba(${190+40*(1-ph)|0},${90*(1-ph)|0},255,${0.65*(1-ph)})`;x.beginPath();x.ellipse(px,py,3.2*s*2*(1-ph*0.5),6*s*2*(1-ph*0.4),0,0,7);x.fill()}
+      x.restore();
+    }
+    // 天道：祥云
+    if(k==='tian'){x.fillStyle='rgba(255,240,205,.85)';for(const [ox,oy,r] of [[-22,4,11],[-6,0,14],[12,3,12],[26,6,9]]){x.beginPath();x.ellipse(fx+ox*s*2*0.8,fy+oy*s*1.4-lift*0.15,r*s*2*0.8,r*s*2*0.45,0,0,7);x.fill()}}
+    // 畜生：兽伴
+    if(k==='beast'){const bob=Math.abs(Math.sin(sec*7))*4*s*2,ps=s*0.48;
+      x.fillStyle='rgba(0,0,0,.3)';x.beginPath();x.ellipse(fx-figPx*0.62,fy+4,14*s*2,4*s*2,0,0,7);x.fill();
+      x.drawImage(F.petTint,fx-figPx*0.62-A.cx*ps,fy+4-A.feet*ps-bob,F.img.width*ps,F.img.height*ps)}
+    // 修罗：攻击残影
+    if(k==='asura'&&anim==='attack'){for(let j=3;j>=1;j--){x.globalAlpha=0.16*(4-j);put(F.fire,-j*9*s*2,0)}x.globalAlpha=1}
+    // 描边光
+    if(k==='tian'){x.save();x.shadowColor='rgba(255,210,100,.95)';x.shadowBlur=14*s*2;for(const [dx,dy] of [[-1.5,0],[1.5,0],[0,-1.5],[0,1.5]])put(F.gold,dx,dy);x.restore()}
+    if(k==='asura'){x.save();x.globalCompositeOperation='lighter';for(let j=0;j<5;j++){x.globalAlpha=0.35;put(F.fire,Math.sin(sec*23+j*1.7)*2.2,-Math.abs(Math.cos(sec*19+j))*3.2)}x.restore();x.globalAlpha=1}
+    if(k==='hell'){x.save();x.shadowColor='rgba(170,90,255,.9)';x.shadowBlur=10*s*2;for(const [dx,dy] of [[-1.2,0],[1.2,0],[0,-1.2],[0,1.2]])put(F.violet,dx,dy);x.restore()}
+    // 本体
+    put(k==='ren'?F.img:F[k]);
+    // 天道：光环
+    if(k==='tian'){const hy=fy-lift-(A.feet-F.top)*s-8*s*2;x.strokeStyle='rgba(255,214,110,.95)';x.lineWidth=Math.max(1.5,2.2*s*2);x.beginPath();x.ellipse(fx-4*s*2,hy,16*s*2,4.5*s*2,0,0,7);x.stroke()}
+    // 饿鬼：鬼火
+    if(k==='ghost'){x.save();x.globalCompositeOperation='lighter';for(let i=0;i<3;i++){const a=sec*1.8+i*2.1,px=fx+Math.cos(a)*34*s*2,py=fy-lift-48*s*2+Math.sin(a)*14*s*2;
+      const g=x.createRadialGradient(px,py,0,px,py,9*s*2);g.addColorStop(0,'rgba(170,255,190,.95)');g.addColorStop(1,'rgba(80,200,120,0)');x.fillStyle=g;x.beginPath();x.arc(px,py,9*s*2,0,7);x.fill()}x.restore()}
+  }
+}
+
+let t0=performance.now(),paused=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+function loop(now){draw(paused?0:now-t0);if(!paused)requestAnimationFrame(loop)}
+document.querySelectorAll('[data-anim]').forEach(b=>b.addEventListener('click',()=>{anim=b.dataset.anim;t0=performance.now();
+  document.querySelectorAll('[data-anim]').forEach(o=>o.setAttribute('aria-pressed',o===b));if(paused)draw(0)}));
+document.querySelectorAll('[data-size]').forEach(b=>b.addEventListener('click',()=>{size=b.dataset.size;
+  document.querySelectorAll('[data-size]').forEach(o=>o.setAttribute('aria-pressed',o===b));if(paused)draw(0)}));
+window.addEventListener('resize',()=>{if(paused)draw(0)});
+prepare().then(()=>{draw(0);if(!paused)requestAnimationFrame(loop)});
+</script>

@@ -1,0 +1,32 @@
+# 仓库只保存最终采用的素材和重新生成所需的源文件；淘汰版本与中间产物只留本地。
+# 规则说明见 docs/animation-pipeline.md 末节“素材入库规则”。
+
+# 系统与工具缓存
+__pycache__/
+*.pyc
+node_modules/
+.DS_Store
+Thumbs.db
+
+# Codex 出图日志
+*.out
+*.log
+*.prompt
+
+# 可由脚本重新生成的中间产物
+art/heroes/*/frames/
+art/heroes/*/rig/
+art/heroes/*/*.gif
+
+# 淘汰的动作版本
+art/heroes/jingwei/raw/attack-v1.png
+
+# 历史探索与原型素材（钟馗仍在讨论，保留其探索图）
+art/concepts/*.png
+!art/concepts/zhongkui-v5-exploration.png
+art/references/
+art/raw/
+art/review/
+art-demo/styles/raw/*
+!art-demo/styles/raw/qban.png
+!art-demo/styles/raw/shuimo.png
