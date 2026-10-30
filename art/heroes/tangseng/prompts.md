@@ -46,29 +46,30 @@ The first cell must be the cleanest, complete character suitable as a single aut
 ## attack
 
 ```text
-ANIMATION: SIX KEY POSES of normal attack — Tang Seng gently flicks ONE prayer bead at an enemy, without attacking with the ring staff. The staff stays upright in the same holding hand; the other hand performs the attack. Keep head width and age exactly identical to the approved idle first frame. Feet mostly planted; slight shoulder and sleeve movement is encouraged, but no large body translation or body stretching.
+ANIMATION: Tang Seng's NORMAL ATTACK is now the GOLDEN RING STAFF SWEEP shown in the user-selected action reference, NOT bead flicking. Keep the approved youthful face, body ratio, five-petal crown, long WHITE ribbons, vermilion kasaya, ochre sleeves, backpack, mala and the exact design and length of the single golden ring staff, identical through all poses.
 
-CELL 1: composed neutral guard; free hand near necklace.
-CELL 2: free fingers pick one wooden bead; elbow gathers toward chest.
-CELL 3: wrist draws back slightly and shoulders prepare; clear anticipation.
-CELL 4: RELEASE POSE — free hand extends and flicks to screen-right, fingers opened. The game's projectile renderer creates the flying bead at this moment: do NOT draw a disconnected/flying bead.
-CELL 5: natural follow-through, loose sleeve follows the wrist; staff remains stable.
-CELL 6: arm and necklace settle toward original guard.
+SIX DISTINCT KEY POSES in one 3 x 2 sprite strip, each 512 x 512. These are one coherent short staff-combo, not six separate attacks.
+CELL 1: calm guard, ring staff upright in dominant hand, gaze to right, both feet planted.
+CELL 2: athletic anticipation: knee bends, torso pivots slightly, grip slides down shaft, staff drawn diagonally backward, ribbons and robe lag behind.
+CELL 3: LOW SWEEP: staff sweeps from back-left across the front, body lowers, sleeves follow; clear curved staff path. Do NOT draw actual light trails in this BODY sprite strip.
+CELL 4: HIT / RELEASE POSE: forceful forward step and broad upward/rightward diagonal staff slash with the ringed head leading, eyes focus on target. The separate attack wave VFX and ranged projectile originate from the staff head at THIS pose. Maintain staff continuity, single shaft, two hands only.
+CELL 5: follow-through, robe hem and long white ribbons continue the movement, weight settles on front foot, staff elevated across the right shoulder.
+CELL 6: smooth recovery to upright staff guard, face/head unchanged from cell 1.
 
-No extra beads, staffs, new props or spell glow. Preserve crown, backpack, necklace silhouette and identical face. SIX DIFFERENT genuine arm/hand poses, not a static image shaken or scaled.
+The reference's golden swoosh is a separate EFFECT strip, NOT fused into the character silhouettes. One weapon only; staff grip must stay consistent; no detached hands, teleported staff, duplicated limbs, face swelling, different crown, sudden full-body scale changes, rear views or terrain. The body motion must be much more powerful and readable than gentle arm-only prayer-bead throwing.
 ```
 
 ## cast
 
 ```text
-ANIMATION: SIX KEY POSES of Tang Seng chanting scripture / casting a protective mantra (诵经). The gameplay may create a golden team shield or healing spell separately at release; the body strip has NO gold aura or energy field. Tang Seng remains a serene young monk, facing screen-right 3/4, with upright golden ring staff in the same hand and his free hand guiding the prayer beads. Facial identity and head size must remain identical to idle.
+ANIMATION: six distinct full-body key poses for Tang Seng's SERENE GOLDEN BUDDHIST MANTRA, matching the user-selected reference's rising staff, kneeling/lotus blessing and returning to guard. This cast body animation can accompany a team shield or chant. The glowing mandala, golden lotus, floating petals and translucent Buddha silhouette must be generated as separate VFX layers, NOT baked into this character strip.
 
-CELL 1: quietly draws attention inward, staff planted and robe steady.
-CELL 2: raises prayer beads near chest, soft small preparatory breath.
-CELL 3: bows head a fraction while lifting fingers into chanting gesture; sleeves follow naturally.
-CELL 4: RELEASE POSE — clearly recites the mantra, mouth slightly open, free hand held forward in blessing; the gameplay shield/healing effect starts on this pose.
-CELL 5: continues chanting for one beat, ribbons and beads settle; same face and head scale.
-CELL 6: lowers hand back toward calm stance, closes mouth, returns to neutral.
+CELL 1: calm standing posture with the ring staff upright and prayer beads visible.
+CELL 2: gently lifts the staff, other hand rises with beads; light preparatory knee bend.
+CELL 3: turns chest slightly towards front-right and raises the ringed head high, eyes serene; wide sleeves and ribbons follow.
+CELL 4: RELEASE POSE: gathers hands in a readable prayer gesture, lowers or sits naturally on folded legs, chants; the external golden lotus / circular Buddhist halo blooms at this frame.
+CELL 5: maintains prayer posture for one beat; fingers, necklace, costume and staff remain mechanically plausible. Do not duplicate the staff when lowering it.
+CELL 6: settles back to the standing guard pose, with the same body size, position and face as cell 1.
 
-The transitions must communicate prayer and blessing, NOT an aggressive strike. No hand teleportation, no double necklace, no extra fingers, no broken staff rings, no text, no spell aura or semi-transparent elements. SIX DISTINCT intentional poses with coherent timing.
+Make the expression calm but the gesture ceremonial and visually satisfying; avoid random magic-wand waving, extra arms, floating weapon, unreadable hands, synthetic body scaling or half-transparent elements. Keep all parts within cell boundaries and the approved head-to-body ratio exactly.
 ```
