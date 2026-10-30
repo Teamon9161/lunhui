@@ -1,15 +1,20 @@
-// 动作预览：把一个角色的各个动作按实际游戏尺寸并排循环播放，供试看和反馈。
-// 出手动作使用核心定义的前摇/收势时长，与战斗中的节奏一致。
+// 动作审阅：同一批 2~3 个动作按列展示，每一行用不同速率独立循环。
+// 预览使用实际游戏尺寸；速率仅影响这一格，不受战斗倍速按钮影响。
 import { Color, Label, Layers, Node, Sprite, UITransform } from 'cc';
 import type { ActTiming } from '../battle/defs';
 import { AnimPlayer } from './HeroArt';
 import type { ArtFrame, HeroArt } from './HeroArt';
 
-const CLIPS: [string, string][] = [['idle', '待机'], ['move', '移动'], ['attack', '普攻'], ['cast', '技能'], ['hit', '受击'], ['die', '阵亡']];
+const FIRST_BATCH: ReadonlyArray<readonly [string, string]> = [
+    ['idle', '待机'],
+    ['attack', '普攻'],
+    ['cast', '技能'],
+];
+const RATES = [0.25, 0.5, 1];
 const GAP = 0.6;
 const tmp = new Color();
 
-interface Cell { sprite: Sprite; overlay: Sprite; anim: AnimPlayer; name: string; wait: number }
+interface Cell { sprite: Sprite; overlay: Sprite; anim: AnimPlayer; name: string; rate: number; wait: number }
 
 function show(s: Sprite, f: ArtFrame): void {
     if (s.spriteFrame !== f.sf) s.spriteFrame = f.sf;
@@ -22,33 +27,51 @@ export class PreviewGallery {
     readonly root: Node;
     private readonly cells: Cell[] = [];
 
-    constructor(parent: Node, private readonly art: HeroArt, private readonly timing: ActTiming | undefined, title: string, top: number) {
+    constructor(
+        parent: Node,
+        private readonly art: HeroArt,
+        private readonly timing: ActTiming | undefined,
+        title: string,
+        top: number,
+        clips: ReadonlyArray<readonly [string, string]> = FIRST_BATCH,
+    ) {
         this.root = new Node('PreviewGallery');
         this.root.layer = Layers.Enum.UI_2D;
         parent.addChild(this.root);
-        this.label(title, 0, top, 26, new Color(255, 230, 190, 255));
-        CLIPS.forEach(([name, cn], i) => {
-            const col = i % 3, row = Math.floor(i / 3);
-            const x = (col - 1) * 230, ground = top - 190 - row * 210;
-            const n = new Node(name);
-            n.layer = Layers.Enum.UI_2D;
-            this.root.addChild(n);
-            n.addComponent(UITransform);
-            const s = n.addComponent(Sprite);
-            s.sizeMode = Sprite.SizeMode.CUSTOM;
-            s.trim = false;
-            n.setPosition(x, ground);
-            const on = new Node('Blend');
-            on.layer = Layers.Enum.UI_2D;
-            n.addChild(on);
-            on.addComponent(UITransform);
-            const overlay = on.addComponent(Sprite);
-            overlay.sizeMode = Sprite.SizeMode.CUSTOM;
-            overlay.trim = false;
-            this.label(cn, x, ground - 22, 20, new Color(220, 210, 190, 255));
-            const cell = { sprite: s, overlay, anim: new AnimPlayer(), name, wait: 0 };
-            this.restart(cell);
-            this.cells.push(cell);
+        this.label(title, 0, top, 25, new Color(255, 230, 190, 255));
+
+        // 正在制作中的英雄可以先只有待机，不因其他动作缺失而崩溃。
+        const available = clips.filter(([name]) => !!this.art.clip(name)).slice(0, 3);
+        available.forEach(([, label], col) => {
+            this.label(label, (col - (available.length - 1) / 2) * 218, top - 52, 21, new Color(242, 222, 190, 255));
+        });
+
+        RATES.forEach((rate, row) => {
+            const ground = top - 202 - row * 232;
+            this.label(`${rate}×`, -331, ground + 66, 18, new Color(190, 205, 230, 255));
+            available.forEach(([name], col) => {
+                const x = (col - (available.length - 1) / 2) * 218;
+                const n = new Node(`${name}-${rate}x`);
+                n.layer = Layers.Enum.UI_2D;
+                this.root.addChild(n);
+                n.addComponent(UITransform);
+                const sprite = n.addComponent(Sprite);
+                sprite.sizeMode = Sprite.SizeMode.CUSTOM;
+                sprite.trim = false;
+                n.setPosition(x, ground);
+
+                const on = new Node('Blend');
+                on.layer = Layers.Enum.UI_2D;
+                n.addChild(on);
+                on.addComponent(UITransform);
+                const overlay = on.addComponent(Sprite);
+                overlay.sizeMode = Sprite.SizeMode.CUSTOM;
+                overlay.trim = false;
+
+                const cell: Cell = { sprite, overlay, anim: new AnimPlayer(), name, rate, wait: 0 };
+                this.restart(cell);
+                this.cells.push(cell);
+            });
         });
     }
 
@@ -78,13 +101,16 @@ export class PreviewGallery {
 
     update(dt: number): void {
         for (const c of this.cells) {
+            const elapsed = Math.min(dt, 0.25) * c.rate;
             if (c.anim.done) {
-                c.wait += dt;
+                c.wait += elapsed;
                 if (c.wait >= GAP) this.restart(c);
             } else {
-                c.anim.advance(dt);
+                c.anim.advance(elapsed);
             }
-            show(c.sprite, c.anim.frame()!);
+            const frame = c.anim.frame();
+            if (!frame) continue;
+            show(c.sprite, frame);
             const up = c.anim.next();
             c.overlay.node.active = !!up.frame;
             if (up.frame) {
