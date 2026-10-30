@@ -17,11 +17,11 @@ Output a single full-body Tang with his existing staff on a genuinely TRANSPAREN
 
 # 首批正式动作出图提示词（生产准备，未出图）
 
-下面的段落供 \`art/tools/gen.py\` 读取；其余旧内容保留，用于追溯透明参考的来源。首批只做 idle / attack / cast，三项未验收前不开始第二批。
+下面的段落供 `art/tools/gen.py` 读取；其余旧内容保留，用于追溯透明参考的来源。首批只做 idle / attack / cast，三项未验收前不开始第二批。
 
 ## common
 
-\`\`\`text
+```text
 Create ONE 1536x1024 landscape sprite strip for a 2D Chinese-mythology mobile game's hero TANG SENG. Use the supplied USER-APPROVED reference as strict source of truth. If a five-person lineup is supplied, Tang Seng is ONLY the RIGHTMOST FIFTH character; ignore the other four. A single-character transparent cutout may be supplied as an additional reference but does not override the approved original.
 
 IDENTITY LOCK: the exact same gentle youthful face, shaved head, soft brown eyes, small composed smile, five-petal golden monk crown with two flowing WHITE ribbons, ochre-yellow inner robe with white collar and generous sleeves, vermilion kasaya with gold trim/pattern, dark wooden prayer-bead necklace with tassel, brown scripture-scroll backpack secured with red cords and orange tassels, tall golden ringed monk staff, and dark shoes. Preserve the approved chibi/anime proportion, body volume, face size, hairless scalp, costume, staff silhouette, and deep warm palette. No redesign, no old monk, no baby face, no elongation of body or changes to the eyes/crown.
@@ -31,21 +31,21 @@ SHEET FORMAT: precisely 3 columns x 2 rows, SIX separate full-body poses, readin
 STYLE: hand-drawn, neat anime cel shading, stable strong dark-brown outline, solid controlled palette, subtle single-tone shadows, readable at approximately 130 design pixels tall in-game. Pixel-perfect colour and proportion continuity matter more than artistic flourish.
 
 BACKGROUND: flat PURE GREEN #00FF00 in each and every cell, with no gradients, no visible separators, no guide lines, no captions, no numbers, no ground, no shadows, no glow, no particles. Do not add extra weapons, characters or objects. No motion blur, translucency, smear frames, fading or duplicated limbs. No light effects in the body strip; VFX are separate runtime sprites.
-\`\`\`
+```
 
 ## idle
 
-\`\`\`text
+```text
 ANIMATION: TANG SENG neutral IDLE source pose. This strip will supply ONLY the FIRST CELL to an offline same-image small-region deformation process; the other five cells are for checking composition. Draw six IDENTICAL calm key poses, NOT six AI-repainted breathing phases.
 
 Tang Seng stands quietly, both feet anchored on the floor, body relaxed, gentle composed gaze to screen-right. One hand holds the golden ring staff upright with all rings completely visible, the other hand rests naturally by the prayer beads in front of the chest. Necklace and backpack align with the approved reference. The robe and long white ribbons hang naturally with enough negative space for future tiny movement. No large swing, no lifted foot, no floating, no raised staff, no speech or spell effects. Keep the HEAD exactly the same size in all six cells.
 
 The first cell must be the cleanest, complete character suitable as a single authoritative idle frame.
-\`\`\`
+```
 
 ## attack
 
-\`\`\`text
+```text
 ANIMATION: SIX KEY POSES of normal attack — Tang Seng gently flicks ONE prayer bead at an enemy, without attacking with the ring staff. The staff stays upright in the same holding hand; the other hand performs the attack. Keep head width and age exactly identical to the approved idle first frame. Feet mostly planted; slight shoulder and sleeve movement is encouraged, but no large body translation or body stretching.
 
 CELL 1: composed neutral guard; free hand near necklace.
@@ -56,11 +56,11 @@ CELL 5: natural follow-through, loose sleeve follows the wrist; staff remains st
 CELL 6: arm and necklace settle toward original guard.
 
 No extra beads, staffs, new props or spell glow. Preserve crown, backpack, necklace silhouette and identical face. SIX DIFFERENT genuine arm/hand poses, not a static image shaken or scaled.
-\`\`\`
+```
 
 ## cast
 
-\`\`\`text
+```text
 ANIMATION: SIX KEY POSES of Tang Seng chanting scripture / casting a protective mantra (诵经). The gameplay may create a golden team shield or healing spell separately at release; the body strip has NO gold aura or energy field. Tang Seng remains a serene young monk, facing screen-right 3/4, with upright golden ring staff in the same hand and his free hand guiding the prayer beads. Facial identity and head size must remain identical to idle.
 
 CELL 1: quietly draws attention inward, staff planted and robe steady.
@@ -71,4 +71,4 @@ CELL 5: continues chanting for one beat, ribbons and beads settle; same face and
 CELL 6: lowers hand back toward calm stance, closes mouth, returns to neutral.
 
 The transitions must communicate prayer and blessing, NOT an aggressive strike. No hand teleportation, no double necklace, no extra fingers, no broken staff rings, no text, no spell aura or semi-transparent elements. SIX DISTINCT intentional poses with coherent timing.
-\`\`\`
+```
